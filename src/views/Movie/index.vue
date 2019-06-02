@@ -20,6 +20,8 @@
                     </keep-alive>
             </div>
         <TabBar/>
+        <router-view name="detail" />
+        <!-- 详情页 -->
   </div>
 </template>
 
