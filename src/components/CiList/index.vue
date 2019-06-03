@@ -1,5 +1,7 @@
 <template>
-    <div class="cinema_body">
+    <div class="cinema_body" id="scroll">
+         <Loading v-if="isLoading" />
+        <Scroller  v-else>
         <ul>
             <!-- <li>
                 <div>
@@ -33,6 +35,7 @@
             </li>
             
         </ul>
+        </Scroller>
     </div>
 </template>
 
@@ -42,15 +45,22 @@ export default {
     name : 'CiList',
     data(){
         return{
-            cinemaList : []
+            cinemaList : [],
+            isLoading : true,
+            prevCityId : -1
         }
     },
-    mounted(){
-        this.axios.get('/api/cinemaList?cityId=10')
+    activated(){
+        const cityId = this.$store.state.city.id;
+        if( this.prevCityId === cityId){ return ;}
+        this.isLoading = true;
+        this.axios.get('/api/cinemaList?cityId='+ cityId )
         .then((res)=>{
             const msg = res.data.msg;
             if(msg === "ok"){
                 this.cinemaList = res.data.data.cinemas
+                this.isLoading = false;
+                this.prevCityId = cityId;
             }
         })
     },
@@ -89,7 +99,6 @@ export default {
 </script>
 
 <style scoped>
-    #content .cinema_body{ flex:1; overflow:auto;}
 .cinema_body ul{ padding:20px;}
 .cinema_body li{  border-bottom:1px solid #e6e6e6; margin-bottom: 20px;}
 .cinema_body div{ margin-bottom: 10px;}
@@ -101,5 +110,6 @@ export default {
 .cinema_body .card div{ padding: 0 3px; height: 15px; line-height: 15px; border-radius: 2px; color: #f90; border: 1px solid #f90; font-size: 13px; margin-right: 5px;}
 .cinema_body .card div.or{ color: #f90; border: 1px solid #f90;}
 .cinema_body .card div.bl{ color: #589daf; border: 1px solid #589daf;}
+#scroll{ height: 684px;}
 
 </style>
